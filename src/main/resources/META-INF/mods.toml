@@ -1,0 +1,39 @@
+modLoader = "kotlinforforge"
+loaderVersion = "[3,)"
+
+license = "MIT License"
+
+issueTrackerURL = "https://github.com/psyGamer/gunmod/issues/"
+
+[[mods]]
+modId = "gunmod"
+version = "${file.jarVersion}"
+displayName = "GunMod"
+
+description = '''
+Guns.
+'''
+
+#updateJSONURL="https://www.curseforge.com/minecraft/mc-mods/wireframe"
+#displayURL = "https://www.curseforge.com/minecraft/mc-mods/gun"
+
+#logoFile = "logo.png"
+
+#credits="Thanks for this example mod goes to Java"
+authors = "psyGamer"
+
+[[dependencies.gunmod]]
+modId = "forge"
+versionRange = "[36,)"
+mandatory = true
+
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.gunmod]]
+modId = "minecraft"
+versionRange = "[1.18,)"
+mandatory = true
+
+ordering = "NONE"
+side = "BOTH"
