@@ -2,11 +2,12 @@
    "required": true,
    "minVersion": "0.8",
    "package": "dev.psygamer.gunmod.mixin",
-   "compatibilityLevel": "JAVA_8",
+   "compatibilityLevel": "JAVA_17",
    "refmap": "gunmod.refmap.json",
    "mixins": [
    ],
    "client": [
+	  "MouseHandlerMixin"
    ],
    "injectors": {
 	  "defaultRequire": 1
