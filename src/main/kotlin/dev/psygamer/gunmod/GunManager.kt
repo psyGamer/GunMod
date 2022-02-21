@@ -38,9 +38,7 @@ object GunManager {
 		else if (event.button == GLFW_MOUSE_BUTTON_2)
 			handleAiming(player, event)
 		
-		
-		event.isCanceled = event.button == GLFW_MOUSE_BUTTON_1 ||
-						   event.button == GLFW_MOUSE_BUTTON_2
+		event.isCanceled = event.action == GLFW_PRESS && event.button == GLFW_MOUSE_BUTTON_1
 	}
 	
 	@SubscribeEvent
