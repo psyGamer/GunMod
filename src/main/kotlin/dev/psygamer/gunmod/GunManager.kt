@@ -1,17 +1,16 @@
 package dev.psygamer.gunmod
 
 import net.minecraft.client.Minecraft
-import net.minecraft.network.chat.TextComponent
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.world.entity.ai.attributes.*
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.entity.projectile.ProjectileUtil
-import net.minecraft.world.phys.EntityHitResult
 import net.minecraftforge.client.event.*
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import org.lwjgl.glfw.GLFW.*
 import dev.psygamer.gunmod.item.GunItem
-import dev.psygamer.gunmod.util.*
+import dev.psygamer.gunmod.network.send
+import dev.psygamer.gunmod.network.to_server.SShootWeaponPacket
 
 @Mod.EventBusSubscriber
 object GunManager {
@@ -52,41 +51,22 @@ object GunManager {
 	
 	private fun handleAiming(player: Player, event: InputEvent.RawMouseEvent) {
 		if (event.action == GLFW_PRESS) {
-			aiming = true
+			if (player.attributes.hasModifier(Attributes.MOVEMENT_SPEED, GunItem.SPEED_MODIFIER_AIMING_UUID))
+				return
 			
+			aiming = true
 			player.attributes.getInstance(Attributes.MOVEMENT_SPEED)
 					?.addTransientModifier(AttributeModifier(GunItem.SPEED_MODIFIER_AIMING_UUID, "Speed modifier", 0.5,
 															 AttributeModifier.Operation.MULTIPLY_TOTAL))
 		} else if (event.action == GLFW_RELEASE) {
 			aiming = false
-			
 			player.attributes.getInstance(Attributes.MOVEMENT_SPEED)
 					?.removeModifier(GunItem.SPEED_MODIFIER_AIMING_UUID)
 		}
 	}
 	
-	private fun fire(player: Player) {
-		val hitResult = shootRayCastFromPlayer(player, 50.0)
-		
-		if (hitResult != null) {
-			hitResult.entity.kill()
-			player.sendMessage(TextComponent("lmafo ez"), player.uuid)
-		} else {
-			player.sendMessage(TextComponent("I would say your aim is cancer, but cancer actually kills people!"), player.uuid)
-		}
-	}
-	
-	private fun shootRayCastFromPlayer(player: Player, maxDistance: Double): EntityHitResult? {
-		val viewVector = player.getViewVector(1.0f)
-		val startVector = player.eyePosition
-		val endVector = startVector + viewVector * maxDistance
-		
-		val boundingBox = player.boundingBox
-				.expandTowards(viewVector * maxDistance)
-				.inflate(1.0, 1.0, 1.0)
-		
-		return ProjectileUtil.getEntityHitResult(player, startVector, endVector, boundingBox,
-												 { !it.isSpectator }, maxDistance * maxDistance)
+	private fun fire(player: LocalPlayer) {
+		SShootWeaponPacket(player).send()
 	}
 	
 	private fun isIngame(): Boolean {
