@@ -45,7 +45,11 @@ object GunManager {
 	
 	@SubscribeEvent
 	fun onFOVModifier(event: FOVModifierEvent) {
-		event.newfov = if (aiming) event.fov - 30 else event.fov
+		event.newfov =
+			if (aiming && Minecraft.getInstance().options.cameraType.isFirstPerson)
+				event.fov - 30
+			else
+				event.fov
 	}
 	
 	private fun handleAiming(player: Player, event: InputEvent.RawMouseEvent) {

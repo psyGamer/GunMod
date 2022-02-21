@@ -2,6 +2,7 @@ package dev.psygamer.gunmod.mixin;
 
 import dev.psygamer.gunmod.GunManager;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 
 import org.objectweb.asm.Opcodes;
@@ -15,6 +16,9 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class MouseHandlerMixin {
 	
 	@Shadow
+	private Minecraft minecraft;
+	
+	@Shadow
 	private double accumulatedDX;
 	
 	@Shadow
@@ -24,14 +28,14 @@ public class MouseHandlerMixin {
 			at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, ordinal = 0,
 					target = "Lnet/minecraft/client/MouseHandler;accumulatedDX:D"))
 	public double onTurnPlayerFinalDX(double finalDX) {
-		return GunManager.isAiming() ? finalDX * 0.1 : finalDX;
+		return GunManager.isAiming() && minecraft.options.getCameraType().isFirstPerson() ? finalDX * 0.1 : finalDX;
 	}
 	
 	@ModifyVariable(method = "turnPlayer", ordinal = 6,
 			at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, ordinal = 0,
 					target = "Lnet/minecraft/client/MouseHandler;accumulatedDX:D"))
 	public double onTurnPlayerFinalDY(double finalDY) {
-		return GunManager.isAiming() ? finalDY * 0.1 : finalDY;
+		return GunManager.isAiming() && minecraft.options.getCameraType().isFirstPerson() ? finalDY * 0.1 : finalDY;
 	}
 
 //	@ModifyVariable()
