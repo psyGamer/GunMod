@@ -2,6 +2,7 @@ package dev.psygamer.gunmod
 
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.LocalPlayer
+import net.minecraft.world.entity.player.Player
 import net.minecraftforge.client.event.*
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -39,15 +40,26 @@ object GunManager {
 		event.isCanceled = event.action == GLFW_PRESS && event.button == GLFW_MOUSE_BUTTON_1
 	}
 	
+	/**
+	 * Updates the aiming state if the player is no longer holding a gun.
+	 * @return the current aiming state
+	 */
+	fun isAiming(player: Player): Boolean {
+		if (aiming && player.mainHandItem.item !is GunItem)
+			aiming = false
+		
+		return aiming
+	}
+	
 	@SubscribeEvent
 	fun onFOVModifier(event: FOVModifierEvent) {
-		if (aiming && Minecraft.getInstance().options.cameraType.isFirstPerson)
+		if (isAiming(event.entity) && Minecraft.getInstance().options.cameraType.isFirstPerson)
 			event.newfov = GunItem.FOV_MODIFIER
 	}
 	
 	@SubscribeEvent
 	fun onMovementInputUpdate(event: MovementInputUpdateEvent) {
-		if (aiming) {
+		if (isAiming(event.player)) {
 			event.input.forwardImpulse *= GunItem.AIMING_SPEED_MODIFIER
 			event.input.leftImpulse *= GunItem.AIMING_SPEED_MODIFIER
 			return // Only apply 1 modifier
