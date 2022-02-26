@@ -1,6 +1,7 @@
 package dev.psygamer.gunmod.handler
 
 import net.minecraft.client.Minecraft
+import net.minecraft.world.damagesource.IndirectEntityDamageSource
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.phys.Vec3
 import net.minecraftforge.event.TickEvent
@@ -76,6 +77,11 @@ object ShootingHandler {
 	}
 	
 	private fun handleHit(entity: LivingEntity, shot: Shot) {
-		entity.kill()
+		val damage = 30 / (2 pow shot.step).toFloat()
+		
+		@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS") // The getter of the direct entity is nullable
+		val source = IndirectEntityDamageSource("gun", null, shot.shooter)
+		
+		entity.hurt(source, damage)
 	}
 }
