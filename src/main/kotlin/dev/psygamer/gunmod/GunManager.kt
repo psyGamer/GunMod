@@ -7,9 +7,8 @@ import net.minecraftforge.client.event.*
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import org.lwjgl.glfw.GLFW.*
+import dev.psygamer.gunmod.handler.ShootingHandler
 import dev.psygamer.gunmod.item.GunItem
-import dev.psygamer.gunmod.network.send
-import dev.psygamer.gunmod.network.to_server.SShootWeaponPacket
 import dev.psygamer.gunmod.registry.ItemRegistry
 
 @Mod.EventBusSubscriber
@@ -80,7 +79,8 @@ object GunManager {
 	}
 	
 	private fun fire(player: LocalPlayer) {
-		SShootWeaponPacket(player).send()
+		//SShootWeaponPacket(player).send()
+		ShootingHandler.shootGunClientSide()
 	}
 	
 	private fun isIngame(): Boolean {

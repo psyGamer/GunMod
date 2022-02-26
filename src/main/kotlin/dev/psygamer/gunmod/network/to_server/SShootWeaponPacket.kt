@@ -5,10 +5,10 @@ import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.phys.*
 import net.minecraftforge.network.NetworkEvent.Context
-import org.jetbrains.annotations.Contract
+import dev.psygamer.gunmod.handler.*
 import dev.psygamer.gunmod.network.*
 import dev.psygamer.gunmod.util.*
-import dev.psygamer.gunmod.util.math.*
+import dev.psygamer.gunmod.util.math.pitchYawToUnitVector
 
 class SShootWeaponPacket(position: Vec3, rotation: Vec2) : IServerPacket {
 	
@@ -36,29 +36,14 @@ class SShootWeaponPacket(position: Vec3, rotation: Vec2) : IServerPacket {
 	}
 	
 	override fun handle(context: Context) {
-		if (context.sender == null || !isPacketValid(context.sender!!))
+		val sender = context.sender
+		if (sender == null || !isPacketValid(sender))
 			return
 		
-		val rayCastLine = positionRotationToLine(this.position, pitchYawToUnitVector(this.rotation), 50.0)
-		
-		// We can return early here since there's nothing to do if we didn't even hit an entity.
-		val entityHitResult = shootEntityRayCast(context.sender!!, rayCastLine) ?: return
-		val blockHitResult = shootBlockRayCast(context.sender!!, rayCastLine)
-		
-		if (blockHitResult != null) {
-			val entityHitPoint = entityHitResult.location
-			val blockHitPoint = blockHitResult.location
-			
-			val firstHitPoint = firstVectorOnLine(rayCastLine, entityHitPoint, blockHitPoint)
-			
-			if (firstHitPoint !== entityHitPoint)
-				return
-		}
-		
-		entityHitResult.entity.kill()
+		val shot = Shot(sender, this.position, pitchYawToUnitVector(this.rotation))
+		ShootingHandler.shootGunServerSide(shot)
 	}
 	
-	@Contract("null -> false")
 	private fun isPacketValid(sender: ServerPlayer): Boolean {
 		if (sender.eyePosition.distanceToSqr(this.position) > 1.0)
 			return false
