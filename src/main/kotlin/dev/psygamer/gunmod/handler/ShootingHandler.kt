@@ -82,6 +82,10 @@ object ShootingHandler {
 		@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS") // The getter of the direct entity is nullable
 		val source = IndirectEntityDamageSource("gun", null, shot.shooter)
 		
+		// Avoid the invulnerability timer
+		val prevInvulnerableTime = entity.invulnerableTime
+		entity.invulnerableTime = 0
 		entity.hurt(source, damage)
+		entity.invulnerableTime = prevInvulnerableTime
 	}
 }
