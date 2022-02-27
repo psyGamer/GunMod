@@ -37,13 +37,21 @@ class Shot(val shooter: LivingEntity, startVector: Vec3, viewVector: Vec3) {
 object ShootingHandler {
 	
 	private val currentShots = mutableListOf<Shot>()
+	private val shotTimeouts = mutableMapOf<LivingEntity, Int>()
 	
 	fun shootGun(shot: Shot) {
+		if (shotTimeouts.containsKey(shot.shooter) && shotTimeouts[shot.shooter]!! > 0)
+			return
+		
 		currentShots.add(shot)
+		shotTimeouts[shot.shooter] = GunItem.SHOT_DELAY_TICKS
 	}
 	
 	@SubscribeEvent
 	fun onServerTick(event: TickEvent.ServerTickEvent) {
+		for (shotTimeout in shotTimeouts)
+			shotTimeouts[shotTimeout.key] = maxOf(0, shotTimeout.value - 1)
+		
 		currentShots.forEach { shot ->
 			val rayCast = Line(shot.position, shot.nextPosition)
 			
