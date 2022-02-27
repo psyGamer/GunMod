@@ -1,6 +1,6 @@
 package dev.psygamer.gunmod.mixin;
 
-import dev.psygamer.gunmod.GunManager;
+import dev.psygamer.gunmod.handler.client.ClientAimingHandler;
 import dev.psygamer.gunmod.item.GunItem;
 
 import net.minecraft.client.Minecraft;
@@ -29,7 +29,7 @@ public class MouseHandlerMixin {
 			at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, ordinal = 0,
 					target = "Lnet/minecraft/client/MouseHandler;accumulatedDX:D"))
 	public double onTurnPlayerFinalDX(double finalDX) {
-		return GunManager.isAiming() && minecraft.options.getCameraType().isFirstPerson()
+		return ClientAimingHandler.isAiming() && minecraft.options.getCameraType().isFirstPerson()
 				? finalDX * GunItem.FOV_MODIFIER
 				: finalDX;
 	}
@@ -38,7 +38,7 @@ public class MouseHandlerMixin {
 			at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, ordinal = 0,
 					target = "Lnet/minecraft/client/MouseHandler;accumulatedDX:D"))
 	public double onTurnPlayerFinalDY(double finalDY) {
-		return GunManager.isAiming() && minecraft.options.getCameraType().isFirstPerson()
+		return ClientAimingHandler.isAiming() && minecraft.options.getCameraType().isFirstPerson()
 				? finalDY * GunItem.FOV_MODIFIER
 				: finalDY;
 	}
