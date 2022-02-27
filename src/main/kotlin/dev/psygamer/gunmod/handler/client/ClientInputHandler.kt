@@ -1,11 +1,11 @@
 package dev.psygamer.gunmod.handler.client
 
-import net.minecraft.client.Minecraft
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber
 import dev.psygamer.gunmod.item.GunItem
+import dev.psygamer.gunmod.util.*
 
 @EventBusSubscriber(Dist.CLIENT)
 object ClientInputHandler {
@@ -15,10 +15,10 @@ object ClientInputHandler {
 	
 	@SubscribeEvent
 	fun onRenderTick(event: TickEvent.RenderTickEvent) {
-		if (Minecraft.getInstance().player?.mainHandItem?.item !is GunItem || !isIngame())
+		if (LOCAL_PLAYER?.mainHandItem?.item !is GunItem || !isIngame())
 			return
 		
-		val options = Minecraft.getInstance().options
+		val options = MINECRAFT.options
 		
 		if (options.keyUse.isDown && !ClientAimingHandler.isAiming())
 			ClientAimingHandler.setAiming(true)
@@ -41,10 +41,11 @@ object ClientInputHandler {
 	}
 	
 	private fun isIngame(): Boolean {
-		val mc = Minecraft.getInstance()
-		if (mc.player == null || mc.screen != null || mc.overlay != null || !mc.mouseHandler.isMouseGrabbed)
+		if (MINECRAFT.player == null || MINECRAFT.screen != null ||
+			MINECRAFT.overlay != null || !MINECRAFT.mouseHandler.isMouseGrabbed
+		)
 			return false
 		
-		return mc.isWindowActive
+		return MINECRAFT.isWindowActive
 	}
 }

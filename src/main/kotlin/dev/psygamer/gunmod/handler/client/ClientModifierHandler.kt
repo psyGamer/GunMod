@@ -1,11 +1,11 @@
 package dev.psygamer.gunmod.handler.client
 
-import net.minecraft.client.Minecraft
 import net.minecraftforge.client.event.*
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber
 import dev.psygamer.gunmod.item.GunItem
 import dev.psygamer.gunmod.registry.ItemRegistry
+import dev.psygamer.gunmod.util.MINECRAFT
 
 @EventBusSubscriber
 object ClientModifierHandler {
@@ -14,7 +14,7 @@ object ClientModifierHandler {
 	
 	@SubscribeEvent
 	fun onFOVModifierEvent(event: FOVModifierEvent) {
-		if (ClientAimingHandler.isAiming() && Minecraft.getInstance().options.cameraType.isFirstPerson)
+		if (ClientAimingHandler.isAiming() && MINECRAFT.options.cameraType.isFirstPerson)
 			event.newfov = GunItem.FOV_MODIFIER
 	}
 	

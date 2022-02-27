@@ -5,6 +5,7 @@ import dev.psygamer.gunmod.handler.AimingHandler
 import dev.psygamer.gunmod.item.GunItem
 import dev.psygamer.gunmod.network.bidirectional.PlayerAimingPacket
 import dev.psygamer.gunmod.network.sendToServer
+import dev.psygamer.gunmod.util.LOCAL_PLAYER
 
 object ClientAimingHandler {
 	
@@ -12,7 +13,7 @@ object ClientAimingHandler {
 	
 	@JvmStatic
 	fun setAiming(aiming: Boolean) {
-		val localPlayer = Minecraft.getInstance().player ?: return
+		val localPlayer = LOCAL_PLAYER ?: return
 		
 		this.aiming = aiming
 		AimingHandler.setPlayerAiming(localPlayer, aiming)
@@ -20,7 +21,7 @@ object ClientAimingHandler {
 	
 	@JvmStatic
 	fun isAiming(): Boolean {
-		if (Minecraft.getInstance().player?.mainHandItem?.item !is GunItem)
+		if (LOCAL_PLAYER?.mainHandItem?.item !is GunItem)
 			this.aiming = false
 		return this.aiming
 	}
