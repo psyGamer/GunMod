@@ -20,6 +20,9 @@ class Shot(val shooter: LivingEntity, startVector: Vec3, viewVector: Vec3) {
 	val nextPosition
 		get() = position + shotUpdateVector
 	
+	var invalid = false
+		private set
+	
 	init {
 		this.shotUpdateVector = viewVector * GunItem.BULLET_SPEED_BPT
 		this.step = 0
@@ -30,6 +33,10 @@ class Shot(val shooter: LivingEntity, startVector: Vec3, viewVector: Vec3) {
 	fun advanceStep() {
 		this.position = this.nextPosition
 		this.step++
+	}
+	
+	fun markInvalid() {
+		this.invalid = true
 	}
 }
 
@@ -55,24 +62,31 @@ object ShootingHandler {
 		currentShots.forEach { shot ->
 			val rayCast = Line(shot.position, shot.nextPosition)
 			
-			val entityHitResult = shootEntityRayCast(shot.shooter, rayCast)
-								  { !it.isSpectator && it is LivingEntity } ?: return@forEach
+			val entityHitResult = shootEntityRayCast(shot.shooter, rayCast) { !it.isSpectator && it is LivingEntity }
 			val blockHitResult = shootBlockRayCast(shot.shooter, rayCast)
 			
 			if (blockHitResult != null) {
-				val entityHitPoint = entityHitResult.location
+				val entityHitPoint = entityHitResult?.location
 				val blockHitPoint = blockHitResult.location
+				
+				if (entityHitPoint == null) {
+					// We hit a block before we hit an entity
+					shot.markInvalid()
+					return@forEach
+				}
 				
 				val firstHitPoint = firstVectorOnLine(rayCast, entityHitPoint, blockHitPoint)
 				
 				if (firstHitPoint !== entityHitPoint)
 					return@forEach
 			}
+			if (entityHitResult == null)
+				return@forEach
 			
 			handleHit(entityHitResult.entity as LivingEntity, shot)
 		}
 		currentShots.forEach(Shot::advanceStep)
-		currentShots.removeIf { it.step >= GunItem.MAX_SHOT_STEPS }
+		currentShots.removeIf { it.invalid || it.step >= GunItem.MAX_SHOT_STEPS }
 	}
 	
 	private fun handleHit(entity: LivingEntity, shot: Shot) {
