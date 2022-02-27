@@ -9,7 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber
 import dev.psygamer.gunmod.item.GunItem
 import dev.psygamer.gunmod.network.send
-import dev.psygamer.gunmod.network.to_server.SShootWeaponPacket
+import dev.psygamer.gunmod.network.to_server.ServerboundShootGunPacket
 import dev.psygamer.gunmod.util.math.*
 
 class Shot(val shooter: LivingEntity, startVector: Vec3, viewVector: Vec3) {
@@ -44,7 +44,7 @@ object ShootingHandler {
 	fun shootGunClientSide() {
 		val localPlayer = Minecraft.getInstance().player
 		if (localPlayer != null)
-			SShootWeaponPacket(localPlayer).send()
+			ServerboundShootGunPacket(localPlayer).send()
 	}
 	
 	fun shootGunServerSide(shot: Shot) {

@@ -10,7 +10,7 @@ import dev.psygamer.gunmod.network.*
 import dev.psygamer.gunmod.util.*
 import dev.psygamer.gunmod.util.math.pitchYawToUnitVector
 
-class SShootWeaponPacket(position: Vec3, rotation: Vec2) : IServerPacket {
+class ServerboundShootGunPacket(position: Vec3, rotation: Vec2) : IServerPacket {
 	
 	constructor(shooter: LocalPlayer) : this(shooter.eyePosition, shooter.rotationVector)
 	
@@ -23,10 +23,10 @@ class SShootWeaponPacket(position: Vec3, rotation: Vec2) : IServerPacket {
 		this.rotation = rotation
 	}
 	
-	object Decoder : IPacketDecoder<SShootWeaponPacket> {
+	object Decoder : IPacketDecoder<ServerboundShootGunPacket> {
 		
-		override fun decode(buffer: FriendlyByteBuf): SShootWeaponPacket {
-			return SShootWeaponPacket(buffer.readVec3(), buffer.readVec2())
+		override fun decode(buffer: FriendlyByteBuf): ServerboundShootGunPacket {
+			return ServerboundShootGunPacket(buffer.readVec3(), buffer.readVec2())
 		}
 	}
 	
