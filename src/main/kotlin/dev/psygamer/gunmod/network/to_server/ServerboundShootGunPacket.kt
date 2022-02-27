@@ -41,7 +41,7 @@ class ServerboundShootGunPacket(position: Vec3, rotation: Vec2) : IServerPacket 
 			return
 		
 		val shot = Shot(sender, this.position, pitchYawToUnitVector(this.rotation))
-		ShootingHandler.shootGunServerSide(shot)
+		ShootingHandler.shootGun(shot)
 	}
 	
 	private fun isPacketValid(sender: ServerPlayer): Boolean {
