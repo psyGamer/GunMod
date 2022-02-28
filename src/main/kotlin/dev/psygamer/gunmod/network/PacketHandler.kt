@@ -7,7 +7,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.network.*
 import dev.psygamer.gunmod.GunMod
-import dev.psygamer.gunmod.network.to_server.SShootWeaponPacket
+import dev.psygamer.gunmod.network.bidirectional.PlayerAimingPacket
+import dev.psygamer.gunmod.network.to_server.ServerboundShootGunPacket
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 object PacketHandler {
@@ -32,7 +33,13 @@ object PacketHandler {
 	
 	@SubscribeEvent
 	fun onRegister(event: FMLCommonSetupEvent) {
-		registerPacket(SShootWeaponPacket.Decoder)
+		// Client -> Server
+		registerPacket(ServerboundShootGunPacket.Decoder)
+		
+		// Server -> Client
+		
+		// Bidirectional
+		registerPacket(PlayerAimingPacket.Decoder)
 	}
 	
 	fun sendToServer(packet: IServerPacket) {

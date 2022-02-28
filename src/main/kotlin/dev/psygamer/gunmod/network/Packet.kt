@@ -18,6 +18,7 @@ interface IPacketDecoder<T : IPacket> {
 
 interface IClientPacket : IPacket
 interface IServerPacket : IPacket
+interface IBidirectionalPacket : IClientPacket, IServerPacket
 
 fun <MSG : IPacket> identityDecoder(msg: MSG): IPacketDecoder<MSG> {
 	return object : IPacketDecoder<MSG> {
@@ -27,14 +28,11 @@ fun <MSG : IPacket> identityDecoder(msg: MSG): IPacketDecoder<MSG> {
 	}
 }
 
-fun IServerPacket.send() {
+fun IServerPacket.sendToServer() =
 	PacketHandler.sendToServer(this)
-}
 
-fun IClientPacket.sendToAll() {
+fun IClientPacket.sendToAllClients() =
 	PacketHandler.sendToAllClients(this)
-}
 
-fun IClientPacket.sendTo(client: ServerPlayer) {
+fun IClientPacket.sendToClient(client: ServerPlayer) =
 	PacketHandler.sendToClient(this, client)
-}
