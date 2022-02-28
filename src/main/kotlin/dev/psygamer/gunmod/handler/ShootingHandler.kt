@@ -65,15 +65,15 @@ object ShootingHandler {
 			val entityHitResult = shootEntityRayCast(shot.shooter, rayCast) { !it.isSpectator && it is LivingEntity }
 			val blockHitResult = shootBlockRayCast(shot.shooter, rayCast)
 			
+			if (entityHitResult == null || blockHitResult == null)
+				shot.markInvalid() // There will be no more steps after this one
+			
 			if (blockHitResult != null) {
 				val entityHitPoint = entityHitResult?.location
 				val blockHitPoint = blockHitResult.location
 				
-				if (entityHitPoint == null) {
-					// We hit a block before we hit an entity
-					shot.markInvalid()
+				if (entityHitPoint == null)
 					return@forEach
-				}
 				
 				val firstHitPoint = firstVectorOnLine(rayCast, entityHitPoint, blockHitPoint)
 				
